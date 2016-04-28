@@ -13,10 +13,11 @@ import javax.swing.JFrame;
 public class Pong implements ActionListener, KeyListener{
 
 	public static Pong pong;
-	public int width = 760, height = 760;
+	public int width = 700, height = 700;
 
 	public Renderer renderer;
 	public Paddle p1, p2;
+	public Ball ball;
 	
 	public boolean bot = false, w = false, s = false, up = false, down = false;
 	
@@ -25,7 +26,7 @@ public class Pong implements ActionListener, KeyListener{
 		JFrame jFrame = new JFrame("Pong");
 		renderer = new Renderer();
 		
-		jFrame.setSize(width, height + 20);
+		jFrame.setSize(width+15, height + 45);
 		jFrame.setVisible(true);
 		jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		jFrame.add(renderer);
@@ -39,6 +40,7 @@ public class Pong implements ActionListener, KeyListener{
 	private void start() {
 		p1 = new Paddle(this, 1);
 		p2 = new Paddle(this, 2);
+		ball = new Ball(this);
 	}
 
 	public void update(){
@@ -51,6 +53,7 @@ public class Pong implements ActionListener, KeyListener{
 			p2.move(true);
 		else if(down)
 			p2.move(false);
+		ball.update(p1, p2, pong);
 	}
 	
 	public void render(Graphics2D g) {
@@ -63,6 +66,7 @@ public class Pong implements ActionListener, KeyListener{
 		
 		p1.render(g);
 		p2.render(g);
+		ball.render(g);
 	}
 
 	@Override
