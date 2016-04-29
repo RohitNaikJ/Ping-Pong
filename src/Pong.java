@@ -1,4 +1,5 @@
 import java.awt.BasicStroke;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -6,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.*;
 
 import javax.swing.Timer;
 import javax.swing.JFrame;
@@ -18,6 +20,8 @@ public class Pong implements ActionListener, KeyListener{
 	public Renderer renderer;
 	public Paddle p1, p2;
 	public Ball ball;
+	public int difficulty = 1;
+	DatagramSocket socket;
 	
 	public boolean bot = false, w = false, s = false, up = false, down = false;
 	
@@ -37,23 +41,61 @@ public class Pong implements ActionListener, KeyListener{
 		timer.start(); 
 	}
 
-	private void start() {
+	private void start() throws SocketException {
+		socket = new DatagramSocket(6543);
 		p1 = new Paddle(this, 1);
 		p2 = new Paddle(this, 2);
 		ball = new Ball(this);
 	}
 
 	public void update(){
-		if(w)
+		ball.update(p1, p2, pong);
+		if(bot) {
+			p1.update(pong,difficulty,ball);
+			if(up)
+				p2.move(true);
+			else if(down)
+				p2.move(false);
+		}else{
+			if(up){
+				p2.move(true);
+				byte[] SendData = new byte[256];
+				String t = "true";
+				SendData = t.getBytes();
+				
+				DatagramPacket Sendpacket = new DatagramPacket(SendData,SendData.length,host,6543);
+				socket.send(SendPacket);
+			}	
+			else if(down)
+			{	p2.move(false);
+				byte[] SendData = new byte[256];
+				String t = "false";
+				SendData = t.getBytes();
+				
+				DatagramPacket Sendpacket = new DatagramPacket(SendData,SendData.length,host,6543);
+				socket.send(SendPacket);
+			}
+			byte[] ReceiveData = new byte[256];
+			DatagramPacket ReceivePacket = new DatagramPacket(ReceiveData,ReceiveData.length);
+			socket.receive(ReceivePacket);
+			if(ReceivePacket.getData().toString().equals("true")){
+				p1.move(true);
+			}else{
+				if(ReceivePacket.getData().toString().equals("false")){
+					p2.move(false);
+				}
+			}
+		}
+		
+		/*if(w)
 			p1.move(true);
 		else if(s)
 			p1.move(false);
-		
+		*/
 		if(up)
 			p2.move(true);
 		else if(down)
 			p2.move(false);
-		ball.update(p1, p2, pong);
 	}
 	
 	public void render(Graphics2D g) {

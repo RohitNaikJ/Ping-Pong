@@ -34,4 +34,33 @@ public class Paddle {
 				y = Pong.pong.height - height;
 		}
 	}
+
+	public void update(Pong pong,int difficulty,Ball ball) {
+		if(paddleNumber==1){
+			if((ball.x < ((int)(0.5*pong.width)))&&(ball.motionX < 0)){
+				float floatestimate = ((ball.motionY/ball.motionX)*(x - ball.x)) + (float)ball.y;
+				int estimate = (int)floatestimate;
+				settarget(estimate);
+			}
+		}
+		if(paddleNumber==2){
+			
+		}
+		
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void settarget(int estimate) {
+		
+		if(estimate<y+5){
+			move(true);
+		}else{
+			if(estimate>y+height-5){
+				move(false);
+			}
+		}
+		// TODO Auto-generated method stub
+		
+	}
 }

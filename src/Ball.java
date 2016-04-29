@@ -48,7 +48,7 @@ public class Ball {
 		}
 		if((y + height + motionY > pong.height) ||(y+motionY< 0) ){
 			motionY = -motionY;
-			System.out.println("this_______________________************************************************************************");
+			//System.out.println("this_______________________************************************************************************");
 			/*if(motionX>0){
 				this.motionX = random.nextInt(8);
 				if(motionX == 0){
@@ -67,33 +67,37 @@ public class Ball {
 		this.y += motionY;
 	}
 	public void checkCollision(Paddle paddle){
-			if(paddle.paddleNumber == 1){
-				if((x + motionX) < paddle.width){
-					if(x > paddle.width){
-							
-					}else{
-					}
-						
-				}
-			}else
-				if(paddle.paddleNumber == 2){
-				
-			}else System.out.println("paddle num wrong in Ball.checkCollision");
-		/*	if(((paddle.paddleNumber == 1) && ((x + motionX)< (paddle.x+paddle.width))) ||((paddle.paddleNumber == 2) &&(x+motionX + width) > (paddle.x))){
-				if((((y +height) > (paddle.y))&& ((y ) < (paddle.y+paddle.height)))&&
-						(((paddle.paddleNumber == 1) && ( x > (paddle.x+paddle.width))) ||((paddle.paddleNumber == 2) &&(x + width) < (paddle.x)))){
+		if(paddle.paddleNumber == 1){
+			if((x+motionX) < (paddle.x + paddle.width)){
+				if(((y+motionY)>=(paddle.y))&&((y+motionY)<=(paddle.y+paddle.height))){
 					motionX = -motionX;
 				}else{
-					if((((y +height + motionY ) > paddle.y) && (y < paddle.y))|| (((y + motionY) < (paddle.y+paddle.height))&& (y>(paddle.y + paddle.height)))){
-						System.out.println((((y +height + motionY) > paddle.y) && (y < paddle.y)) + "  from top");
-						System.out.println((((y + motionY) < (paddle.y+paddle.height))&& (y>(paddle.y + paddle.height))) + " from bottom");
-						System.out.println(motionY);
+					if((((y+motionY+height) > (paddle.y-5))&&((y + height)<(paddle.y)))){
 						motionY = -motionY;
-						System.out.println(motionY);
+						System.out.println("here in 1_____________");
+					}
+					if(((y+motionY)<(paddle.y+paddle.height+5))&&((y)>(paddle.y +paddle.height))){
+						motionY=-motionY;
+						System.out.println("here in 2_____________");
 					}
 				}
-			}*/
-	
+			}
+		}else{if((x+width+motionX) > (paddle.x )){
+			if(((y+motionY)>paddle.y)&&((y+motionY)<(paddle.y + paddle.height))){
+				motionX = -motionX;
+			}else{
+				if((((y+motionY+height) > (paddle.y-5))&&((y + height)<(paddle.y)))){
+					motionY = -motionY;
+					System.out.println("here in 1_____________");
+				}
+				if(((y+motionY)<(paddle.y+paddle.height+5))&&((y)>(paddle.y +paddle.height))){
+					motionY=-motionY;
+					System.out.println("here in 2_____________");
+				}
+			}
+			}
+			
+		}
 	}
 	
 	public void render(Graphics g){
