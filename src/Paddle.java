@@ -3,7 +3,7 @@ import java.awt.Graphics;
 
 public class Paddle {
 	public int paddleNumber;
-	public int x,y, width=50, height=300;
+	public int x,y, width=30, height=200;
 	public static int speed = 5;
 	
 	public Paddle(Pong pong, int paddleNumber){
@@ -39,7 +39,14 @@ public class Paddle {
 		if(paddleNumber==1){
 			if((ball.x < ((int)(0.5*pong.width)))&&(ball.motionX < 0)){
 				float floatestimate = ((ball.motionY/ball.motionX)*(x - ball.x)) + (float)ball.y;
+				if(floatestimate<0){
+					floatestimate =(float) ((((-ball.motionY)/ball.motionX)*(x - ((ball.motionX/ball.motionY)*(-ball.y))))+ ball.x );
+				}
+				if(floatestimate>pong.height){
+					floatestimate =(float) ((((-ball.motionY)/ball.motionX)*(x - ((ball.motionX/ball.motionY)*(pong.height-ball.y))))+ ball.x ) + pong.width;
+				}
 				int estimate = (int)floatestimate;
+
 				settarget(estimate);
 			}
 		}
@@ -53,10 +60,10 @@ public class Paddle {
 
 	private void settarget(int estimate) {
 		
-		if(estimate<y+5){
+		if(estimate<=y){
 			move(true);
 		}else{
-			if(estimate>y+height-5){
+			if(estimate>=y+height){
 				move(false);
 			}
 		}
