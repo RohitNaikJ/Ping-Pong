@@ -32,6 +32,8 @@ public class Ball {
 		
 	}
 	public void update(Paddle paddle1,Paddle paddle2,Pong pong){
+		checkCollision(paddle1);
+		checkCollision(paddle2); 
 		if((x + width + motionX > pong.width) ||(x+motionX < 0) ){
 			motionX = -motionX;
 			/*if(motionY>0){
@@ -61,15 +63,13 @@ public class Ball {
 				}
 			}*/
 		}
-		checkCollision(paddle1);
-		checkCollision(paddle2); 
 		this.x += motionX;
 		this.y += motionY;
 	}
 	public void checkCollision(Paddle paddle){
 		if(paddle.paddleNumber == 1){
 			if((x+motionX) < (paddle.x + paddle.width)){
-				if(((y+motionY)>=(paddle.y))&&((y+motionY)<=(paddle.y+paddle.height))){
+				if(((y+motionY)>=(paddle.y+5))&&((y+motionY)<=(paddle.y+paddle.height-5))){
 					motionX = -motionX;
 				}else{
 					if((((y+motionY+height) > (paddle.y-5))&&((y + height)<(paddle.y)))){
