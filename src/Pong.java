@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
 
 import javax.swing.Timer;
 import javax.swing.JFrame;
@@ -22,10 +23,11 @@ public class Pong implements ActionListener, KeyListener{
 	public Paddle p1, p2;
 	public Ball ball;
 	public int difficulty = 1;
-	DatagramSocket socket;
-	public  InetAddress host;
-	
-	public boolean bot = false, w = false, s = false, up = false, down = false;
+	public int GroupPort;
+	public DatagramSocket socket;
+	public ArrayList<String> IP_list;
+	public String firsthost;
+	public boolean bot = true, w = false, s = false, up = false, down = false;
 	
 	public Pong() throws SocketException, UnknownHostException{
 		Timer timer = new Timer(20, this);
@@ -44,52 +46,73 @@ public class Pong implements ActionListener, KeyListener{
 	}
 
 	private void start() throws SocketException, UnknownHostException {
-		socket = new DatagramSocket(6599);
-		host = InetAddress.getByName("10.192.57.238");
 		p1 = new Paddle(this, 1);
 		p2 = new Paddle(this, 2);
 		ball = new Ball(this);
+		IP_list = new ArrayList<String>();
+		socket = new DatagramSocket(GroupPort);
+		StartNetwork();
+		
+		
+	}
+
+	private void StartNetwork() throws SocketException {
+		// TODO Auto-generated method stub
+		Runnable networkThread = new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+			while(true){
+				try {
+					byte[] ReceiveData = new byte[1024];
+					DatagramPacket ReceivePacket = new DatagramPacket(ReceiveData,ReceiveData.length);
+					
+					socket.receive(ReceivePacket);
+					if(IP_list.isEmpty()){
+						String hostAddress = ReceivePacket.getAddress().getHostAddress();
+						IP_list.add(hostAddress);
+						bot = false;
+					}
+					if(ReceivePacket.getData().toString().trim().equals("true")){
+						p1.move(true);
+					}
+					if(ReceivePacket.getData().toString().trim().equals("false")){
+						p1.move(false);
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+				
+			}
+			
+		};
+		Thread t = new Thread(networkThread);
+		t.start();
+		
 	}
 
 	public void update() throws IOException{
 		ball.update(p1, p2, pong);
 		if(bot) {
-			p1.update(pong,difficulty,ball);
-			if(up)
-				p2.move(true);
-			else if(down)
-				p2.move(false);
+			if(up) p2.move(true);
+			if(down) p2.move(false);
+			p1.update(pong, difficulty, ball);
 		}else{
 			if(up){
-				p2.move(true);
-				byte[] SendData = new byte[256];
-				String t = "true";
-				SendData = t.getBytes();
-				
-				DatagramPacket Sendpacket = new DatagramPacket(SendData,SendData.length,host,6543);
-				socket.send(Sendpacket);
-			}	
-			else if(down)
-			{	p2.move(false);
-				byte[] SendData = new byte[256];
-				String t = "false";
-				SendData = t.getBytes();
-				
-				DatagramPacket Sendpacket = new DatagramPacket(SendData,SendData.length,host,6543);
-				socket.send(Sendpacket);
-			}
-			byte[] ReceiveData = new byte[256];
-			DatagramPacket ReceivePacket = new DatagramPacket(ReceiveData,ReceiveData.length);
-			socket.receive(ReceivePacket);
-			if(ReceivePacket.getData().toString().equals("true")){
-				p1.move(true);
-			}else{
-				if(ReceivePacket.getData().toString().equals("false")){
+				if(!IP_list.isEmpty()){
+					Send("true");
+					p2.move(true);
+				}
+			}else if(down){
+				if(!IP_list.isEmpty()){
+					Send("false");
 					p2.move(false);
 				}
 			}
 		}
-		
 		/*if(w)
 			p1.move(true);
 		else if(s)
@@ -97,6 +120,37 @@ public class Pong implements ActionListener, KeyListener{
 		*/
 	}
 	
+	private void Send(String string) {
+		// TODO Auto-generated method stub
+		final String data = string;
+		Runnable sendthread = new Runnable(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				for(final String Addr : IP_list){
+					try {
+						
+						byte[] SendData = new byte[1024];
+						SendData = data.getBytes();
+						InetAddress InetAddr;
+							InetAddr = InetAddress.getByName(Addr);
+						
+						DatagramPacket SendPacket = new DatagramPacket(SendData,SendData.length,InetAddr,GroupPort);
+						socket.send(SendPacket);
+					} catch (UnknownHostException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}catch(IOException e){
+						e.printStackTrace();
+					}
+				
+				}
+			}
+			
+		};
+	}
+
 	public void render(Graphics2D g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, width, height);
