@@ -111,10 +111,11 @@ public class Pong implements ActionListener, KeyListener{
 						IP_list.add(hostAddress);
 						bot = false;
 						play = true;
+						connection();
 					}
 					String received = (new String(ReceivePacket.getData())).trim();
 					if(received.equals("addme")){
-						Send("ball "+ball.x+" "+ ball.y+" "+ball.motionX+" "+ball.motionY);
+						Send("ball "+ball.x+" "+ ball.y+" "+ball.motionX+" "+ball.motionY+" "+p1.y+" "+p2.y);
 					}
 					if(received.equals("true")){
 						p1.move(true);
@@ -131,6 +132,10 @@ public class Pong implements ActionListener, KeyListener{
 						int mY = Integer.parseInt(args[4]);
 						ball.motionX=mX;
 						ball.motionY=mY;
+						int pad1Y=Integer.parseInt(args[5]);
+						int pad2Y=Integer.parseInt(args[6]);
+						p1.y=pad1Y;
+						p2.y=pad2Y;
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -139,11 +144,33 @@ public class Pong implements ActionListener, KeyListener{
 			}
 				
 			}
-			
+
 		};
 		Thread t = new Thread(networkThread);
 		t.start();
 		
+	}
+	private void connection() {
+		// TODO Auto-generated method stub
+		Runnable continuous = new Runnable(){
+
+			@Override
+			public void run() {
+				while(true){
+				// TODO Auto-generated method stub
+				Send("ball "+ball.x+" "+ ball.y+" "+ball.motionX+" "+ball.motionY+" "+p1.y+" "+p2.y);
+				try {
+					Thread.sleep(200);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				}
+				}
+			
+		};
+		Thread t = new Thread(continuous);
+		t.start();
 	}
 
 	public void update() throws IOException{
