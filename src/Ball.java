@@ -68,29 +68,30 @@ public class Ball {
 	}
 	public void checkCollision(Paddle paddle){
 		if(paddle.paddleNumber == 1){
-			if((x+motionX) < (paddle.x + paddle.width)){
-				if(((y+motionY)>=(paddle.y+5))&&((y+motionY)<=(paddle.y+paddle.height-5))){
+			if((x+motionX) <= (paddle.x + paddle.width)){
+				if(((y+motionY)>=(paddle.y-15))&&((y+motionY)<=(paddle.y+paddle.height+15))){
 					motionX = -motionX;
+					System.out.println("here in 3___________________");
 				}else{
-					if((((y+motionY+height) > (paddle.y-5))&&((y + height)<(paddle.y)))){
+					if((((y+motionY+height) >= (paddle.y-5))&&((y + height)<=(paddle.y)))){
 						motionY = -motionY;
 						System.out.println("here in 1_____________");
 					}
-					if(((y+motionY)<(paddle.y+paddle.height+5))&&((y)>(paddle.y +paddle.height))){
+					if(((y+motionY)<=(paddle.y+paddle.height+5))&&((y)>=(paddle.y +paddle.height))){
 						motionY=-motionY;
 						System.out.println("here in 2_____________");
 					}
 				}
 			}
-		}else{if((x+width+motionX) > (paddle.x )){
-			if(((y+motionY)>paddle.y)&&((y+motionY)<(paddle.y + paddle.height))){
+		}else{if((x+width+motionX) >= (paddle.x )){
+			if(((y+motionY)>=paddle.y-15)&&((y+motionY)<=(paddle.y + paddle.height+15))){
 				motionX = -motionX;
 			}else{
-				if((((y+motionY+height) > (paddle.y-5))&&((y + height)<(paddle.y)))){
+				if((((y+motionY+height) >= (paddle.y-5))&&((y + height)<=(paddle.y)))){
 					motionY = -motionY;
 					System.out.println("here in 1_____________");
 				}
-				if(((y+motionY)<(paddle.y+paddle.height+5))&&((y)>(paddle.y +paddle.height))){
+				if(((y+motionY)<=(paddle.y+paddle.height+5))&&((y)>=(paddle.y +paddle.height))){
 					motionY=-motionY;
 					System.out.println("here in 2_____________");
 				}
