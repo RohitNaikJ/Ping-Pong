@@ -13,7 +13,7 @@ public class Ball {
 		this.x = X;
 		this.y = Y;
 		
-		int rand = random.nextInt(2);
+		/*int rand = random.nextInt(2);
 		if(rand == 1){
 			this.motionX = 5 + random.nextInt(4);
 		}else{
@@ -30,7 +30,7 @@ public class Ball {
 		while(motionX == motionY || motionX == -motionY){
 			this.motionY = 5 + random.nextInt(3);
 		}
-		
+		*/
 	}
 	public void update(Paddle paddle1,Paddle paddle2,Pong pong){
 		checkCollision(paddle1);
