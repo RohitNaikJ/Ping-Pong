@@ -37,7 +37,7 @@ public class Paddle {
 
 	public void update(Pong pong,int difficulty,Ball ball) {
 		if(paddleNumber==1){
-			if((ball.x < ((int)(0.5*pong.width)))&&(ball.motionX < 0)){
+			if((ball.x < (400/*(int)(0.5*((pong.height/5)*ball.motionX)))*/))&&(ball.motionX < 0)){
 				float floatestimate = ((ball.motionY/ball.motionX)*(x - ball.x)) + (float)ball.y;
 				if(floatestimate<0){
 					floatestimate =(float) ((((-ball.motionY)/ball.motionX)*(x - ((ball.motionX/ball.motionY)*(-ball.y))))+ ball.x );
