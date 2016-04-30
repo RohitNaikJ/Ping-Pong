@@ -26,7 +26,7 @@ public class Pong implements ActionListener, KeyListener{
 	public int GroupPort;
 	public DatagramSocket socket;
 	public ArrayList<String> IP_list;
-	public String firsthost;
+	public String firsthost = "192.168.43.251";
 	public boolean bot = true, w = false, s = false, up = false, down = false;
 	
 	public Pong() throws IOException{
@@ -52,7 +52,7 @@ public class Pong implements ActionListener, KeyListener{
 		IP_list = new ArrayList<String>();
 		socket = new DatagramSocket(GroupPort);
 		
-		Send("addme",firsthost);
+		//Send("addme",firsthost);
 		
 		StartNetwork();
 		
@@ -83,8 +83,9 @@ public class Pong implements ActionListener, KeyListener{
 				try {
 					byte[] ReceiveData = new byte[1024];
 					DatagramPacket ReceivePacket = new DatagramPacket(ReceiveData,ReceiveData.length);
-					
 					socket.receive(ReceivePacket);
+					System.out.println("received:" + ReceivePacket.getData().toString().trim());
+					
 					if(IP_list.isEmpty()){
 						String hostAddress = ReceivePacket.getAddress().getHostAddress();
 						IP_list.add(hostAddress);
@@ -157,6 +158,8 @@ public class Pong implements ActionListener, KeyListener{
 						
 						DatagramPacket SendPacket = new DatagramPacket(SendData,SendData.length,InetAddr,GroupPort);
 						socket.send(SendPacket);
+						System.out.println("Sent:"+ SendData.toString().trim());
+						
 					} catch (UnknownHostException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

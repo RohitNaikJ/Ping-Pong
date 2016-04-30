@@ -71,15 +71,15 @@ public class Ball {
 			if((x+motionX) <= (paddle.x + paddle.width)){
 				if(((y+motionY)>=(paddle.y-15))&&((y+motionY)<=(paddle.y+paddle.height+15))){
 					motionX = -motionX;
-					System.out.println("here in 3___________________");
+				//	System.out.println("here in 3___________________");
 				}else{
 					if((((y+motionY+height) >= (paddle.y-5))&&((y + height)<=(paddle.y)))){
 						motionY = -motionY;
-						System.out.println("here in 1_____________");
+					//	System.out.println("here in 1_____________");
 					}
 					if(((y+motionY)<=(paddle.y+paddle.height+5))&&((y)>=(paddle.y +paddle.height))){
 						motionY=-motionY;
-						System.out.println("here in 2_____________");
+						//System.out.println("here in 2_____________");
 					}
 				}
 			}
