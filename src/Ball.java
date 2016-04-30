@@ -6,11 +6,12 @@ import java.util.Random;
 public class Ball {
 	public static int x,y,motionX,motionY,width = 25,height = 25;
 	public static Random random;
-	public Ball(Pong pong){
+	public Ball(Pong pong,int X,int Y){
 		random =  new Random();
-		this.x = pong.width/2 - width/2;
-		this.y = pong.height/2 - height/2;
-		
+		//this.x = pong.width/2 - width/2;
+		//this.y = pong.height/2 - height/2;
+		this.x = X;
+		this.y = Y;
 		
 		int rand = random.nextInt(2);
 		if(rand == 1){

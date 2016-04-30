@@ -23,7 +23,7 @@ public class Pong implements ActionListener, KeyListener{
 	public Paddle p1, p2;
 	public Ball ball;
 	public int difficulty = 1;
-	public int GroupPort;
+	public int GroupPort = 9875;
 	public DatagramSocket socket;
 	public ArrayList<String> IP_list;
 	public String firsthost = "192.168.43.251";
@@ -48,10 +48,10 @@ public class Pong implements ActionListener, KeyListener{
 	private void start() throws IOException {
 		p1 = new Paddle(this, 1);
 		p2 = new Paddle(this, 2);
-		ball = new Ball(this);
+		ball = new Ball(this,pong.width/2 - width/2,pong.height/2 - height/2);
 		IP_list = new ArrayList<String>();
 		socket = new DatagramSocket(GroupPort);
-		
+		System.out.println("socket started");
 		//Send("addme",firsthost);
 		
 		StartNetwork();
@@ -67,7 +67,7 @@ public class Pong implements ActionListener, KeyListener{
 		
 		DatagramPacket SendPacket = new DatagramPacket(SendData,SendData.length,InetAddr,GroupPort);
 		socket.send(SendPacket);
-	
+		System.out.println("sent:"+string);
 		// TODO Auto-generated method stub
 		
 	}
@@ -84,21 +84,27 @@ public class Pong implements ActionListener, KeyListener{
 					byte[] ReceiveData = new byte[1024];
 					DatagramPacket ReceivePacket = new DatagramPacket(ReceiveData,ReceiveData.length);
 					socket.receive(ReceivePacket);
-					System.out.println("received:" + ReceivePacket.getData().toString().trim());
+					System.out.println("received:" + (new String(ReceivePacket.getData())).trim());
 					
 					if(IP_list.isEmpty()){
 						String hostAddress = ReceivePacket.getAddress().getHostAddress();
 						IP_list.add(hostAddress);
 						bot = false;
 					}
-					if(ReceivePacket.getData().toString().trim().equals("addme")){
-						Send("added");
+					String received = (new String(ReceivePacket.getData())).trim();
+					if(received.equals("addme")){
+						Send("ball "+ball.x+" "+ ball.y);
 					}
-					if(ReceivePacket.getData().toString().trim().equals("true")){
+					if(received.equals("true")){
 						p1.move(true);
 					}
-					if(ReceivePacket.getData().toString().trim().equals("false")){
+					if(received.equals("false")){
 						p1.move(false);
+					}
+					if(received.startsWith("ball")){
+						int x = Integer.parseInt(received.substring(received.indexOf(' ')+1, received.lastIndexOf(' ')));
+						int y = Integer.parseInt(received.substring(received.lastIndexOf(' ')+1));
+						ball = new Ball(pong,x,y);
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -158,7 +164,7 @@ public class Pong implements ActionListener, KeyListener{
 						
 						DatagramPacket SendPacket = new DatagramPacket(SendData,SendData.length,InetAddr,GroupPort);
 						socket.send(SendPacket);
-						System.out.println("Sent:"+ SendData.toString().trim());
+						System.out.println("Sent:"+ new String(SendData).trim());
 						
 					} catch (UnknownHostException e) {
 						// TODO Auto-generated catch block
@@ -171,6 +177,8 @@ public class Pong implements ActionListener, KeyListener{
 			}
 			
 		};
+		Thread t = new Thread(sendthread);
+		t.start();
 	}
 
 	public void render(Graphics2D g) {
