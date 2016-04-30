@@ -60,10 +60,10 @@ public class Paddle {
 
 	private void settarget(int estimate) {
 		
-		if(estimate<=y){
+		if(estimate<=(y+15)){
 			move(true);
 		}else{
-			if(estimate>=y+height){
+			if(estimate>=(y+height-15)){
 				move(false);
 			}
 		}

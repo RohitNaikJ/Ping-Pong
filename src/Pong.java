@@ -29,7 +29,7 @@ public class Pong implements ActionListener, KeyListener{
 	public String firsthost;
 	public boolean bot = true, w = false, s = false, up = false, down = false;
 	
-	public Pong() throws SocketException, UnknownHostException{
+	public Pong() throws IOException{
 		Timer timer = new Timer(20, this);
 		JFrame jFrame = new JFrame("Pong");
 		renderer = new Renderer();
@@ -45,15 +45,30 @@ public class Pong implements ActionListener, KeyListener{
 		timer.start(); 
 	}
 
-	private void start() throws SocketException, UnknownHostException {
+	private void start() throws IOException {
 		p1 = new Paddle(this, 1);
 		p2 = new Paddle(this, 2);
 		ball = new Ball(this);
 		IP_list = new ArrayList<String>();
 		socket = new DatagramSocket(GroupPort);
-		//Send("addme");
+		
+		Send("addme",firsthost);
+		
 		StartNetwork();
 		
+		
+	}
+
+	private void Send(String string, String firsthost2) throws IOException {
+		byte[] SendData = new byte[1024];
+		SendData = string.getBytes();
+		InetAddress InetAddr;
+			InetAddr = InetAddress.getByName(firsthost2);
+		
+		DatagramPacket SendPacket = new DatagramPacket(SendData,SendData.length,InetAddr,GroupPort);
+		socket.send(SendPacket);
+	
+		// TODO Auto-generated method stub
 		
 	}
 
@@ -231,7 +246,7 @@ public class Pong implements ActionListener, KeyListener{
 		}
 	}
 	
-	public static void main(String args[]) throws SocketException, UnknownHostException{
+	public static void main(String args[]) throws IOException{
 		pong = new Pong();
 	}
 }
