@@ -51,6 +51,7 @@ public class Pong implements ActionListener, KeyListener{
 		ball = new Ball(this);
 		IP_list = new ArrayList<String>();
 		socket = new DatagramSocket(GroupPort);
+		//Send("addme");
 		StartNetwork();
 		
 		
@@ -73,6 +74,9 @@ public class Pong implements ActionListener, KeyListener{
 						String hostAddress = ReceivePacket.getAddress().getHostAddress();
 						IP_list.add(hostAddress);
 						bot = false;
+					}
+					if(ReceivePacket.getData().toString().trim().equals("addme")){
+						Send("added");
 					}
 					if(ReceivePacket.getData().toString().trim().equals("true")){
 						p1.move(true);
@@ -97,9 +101,9 @@ public class Pong implements ActionListener, KeyListener{
 	public void update() throws IOException{
 		ball.update(p1, p2, pong);
 		if(bot) {
+			p1.update(pong, difficulty, ball);
 			if(up) p2.move(true);
 			if(down) p2.move(false);
-			p1.update(pong, difficulty, ball);
 		}else{
 			if(up){
 				if(!IP_list.isEmpty()){
