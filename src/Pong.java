@@ -27,7 +27,7 @@ public class Pong implements ActionListener, KeyListener{
 	public int GroupPort = 9875;
 	public DatagramSocket socket;
 	public ArrayList<String> IP_list;
-	public String firsthost = "192.168.43.251";
+	public String firsthost = "10.208.23.243";
 	public boolean bot = true, w = false, s = false, up = false, down = false,play=false;
 	private static Random random;
 	
@@ -72,7 +72,7 @@ public class Pong implements ActionListener, KeyListener{
 		IP_list = new ArrayList<String>();
 		socket = new DatagramSocket(GroupPort);
 		System.out.println("socket started");
-		//Send("addme",firsthost);
+		Send("addme",firsthost);
 		
 		StartNetwork();
 		
@@ -111,11 +111,18 @@ public class Pong implements ActionListener, KeyListener{
 						IP_list.add(hostAddress);
 						bot = false;
 						play = true;
-						connection();
+						//connection();
 					}
 					String received = (new String(ReceivePacket.getData())).trim();
 					if(received.equals("addme")){
 						Send("ball "+ball.x+" "+ ball.y+" "+ball.motionX+" "+ball.motionY+" "+p1.y+" "+p2.y);
+					//	try {
+							//Thread.sleep(8);
+						//} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							//e.printStackTrace();
+						//}
+						play = true;
 					}
 					if(received.equals("true")){
 						p1.move(true);
@@ -125,17 +132,33 @@ public class Pong implements ActionListener, KeyListener{
 					}
 					if(received.startsWith("ball")){
 						String args[] = received.split(" ");
-						int x = Integer.parseInt(args[1]);
+						int x =pong.width - Integer.parseInt(args[1]);
 						int y = Integer.parseInt(args[2]);
 						ball = new Ball(pong,x,y);
-						int mX = Integer.parseInt(args[3]);
+						int mX = -Integer.parseInt(args[3]);
 						int mY = Integer.parseInt(args[4]);
 						ball.motionX=mX;
 						ball.motionY=mY;
 						int pad1Y=Integer.parseInt(args[5]);
 						int pad2Y=Integer.parseInt(args[6]);
-						p1.y=pad1Y;
-						p2.y=pad2Y;
+						p2.y=pad1Y;
+						p1.y=pad2Y;
+						play = true;
+					}
+					if(received.startsWith("BIall")){
+						String args[] = received.split(" ");
+						int x =pong.width - Integer.parseInt(args[1]);
+						int y = Integer.parseInt(args[2]);
+						ball = new Ball(pong,x,y);
+						int mX = -Integer.parseInt(args[3]);
+						int mY = Integer.parseInt(args[4]);
+						ball.motionX=mX;
+						ball.motionY=mY;
+						}
+					if(received.startsWith("paddle")){
+						String args[] = received.split(" ");
+						p1.y = Integer.parseInt(args[3]);
+						p2.y = Integer.parseInt(args[2]);
 					}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -156,11 +179,17 @@ public class Pong implements ActionListener, KeyListener{
 
 			@Override
 			public void run() {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				while(true){
 				// TODO Auto-generated method stub
-				Send("ball "+ball.x+" "+ ball.y+" "+ball.motionX+" "+ball.motionY+" "+p1.y+" "+p2.y);
-				try {
-					Thread.sleep(200);
+					Send("ball "+ball.x+" "+ ball.y+" "+ball.motionX+" "+ball.motionY/*+" "+p1.y+" "+p2.y*/);
+					try {
+					Thread.sleep(2000);
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -174,7 +203,7 @@ public class Pong implements ActionListener, KeyListener{
 	}
 
 	public void update() throws IOException{
-		if(play) ball.update(p1, p2, pong);
+		///if(play) ball.update(p1, p2, pong);
 		if(bot) {
 			p1.update(pong, difficulty, ball);
 			if(up) p2.move(true);
